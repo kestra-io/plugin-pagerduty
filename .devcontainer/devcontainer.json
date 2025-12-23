@@ -1,10 +1,10 @@
 {
-  "name": "plugin-template",
+  "name": "plugin-pagerduty",
   "build": {
     "context": ".",
     "dockerfile": "Dockerfile"
   },
-  "workspaceFolder": "/workspaces/plugin-template",
+  "workspaceFolder": "/workspaces/plugin-pagerduty",
   "forwardPorts": [8080],
   "customizations": {
     "vscode": {
