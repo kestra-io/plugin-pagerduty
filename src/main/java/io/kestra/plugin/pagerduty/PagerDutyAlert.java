@@ -78,9 +78,10 @@ import java.net.URI;
                       }
                 """
         ),
-    }
+    },
+    aliases = "io.kestra.plugin.notifications.pagerduty.PagerDutyAlert"
 )
-public class PagerDutyAlert extends AbstractHttpOptionsTask {
+public class PagerDutyAlert extends AbstractPagerDutyConnection {
 
     @Schema(
         title = "PagerDuty event URL"

@@ -55,7 +55,8 @@ import java.util.Map;
                         prefix: true
                 """
         )
-    }
+    },
+    aliases = "io.kestra.plugin.notifications.pagerduty.PagerDutyExecution"
 )
 public class PagerDutyExecution extends PagerDutyTemplate implements ExecutionInterface {
     @Builder.Default
