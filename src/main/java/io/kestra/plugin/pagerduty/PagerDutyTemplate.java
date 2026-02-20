@@ -24,38 +24,43 @@ import java.util.Objects;
 @ToString
 @EqualsAndHashCode
 @Getter
-@NoArgsConstructor
+    @NoArgsConstructor
 public abstract class PagerDutyTemplate extends PagerDutyAlert {
 
     @Schema(
-        title = "Template to use",
+        title = "Template resource path",
         hidden = true
     )
     protected Property<String> templateUri;
 
     @Schema(
-        title = "Map of variables to use for the message template"
+        title = "Template render variables",
+        description = "Key/value map rendered into the template before sending. Uses the current run scope."
     )
     protected Property<Map<String, Object>> templateRenderMap;
 
     @Schema(
-        title = "Integration Key for an integration on a PagerDuty service"
+        title = "PagerDuty routing key",
+        description = "Integration key for the target PagerDuty service."
     )
     protected Property<String> routingKey;
 
     @Schema(
-        title = "Deduplication key for correlating triggers and resolves"
+        title = "Deduplication key for correlating events",
+        description = "Allows PagerDuty to correlate trigger and resolve/acknowledge events."
     )
     @PluginProperty(dynamic = true)
     protected Property<String> deduplicationKey;
 
     @Schema(
-        title = "The type of event. Can be trigger, acknowledge or resolve."
+        title = "PagerDuty event action",
+        description = "One of trigger, acknowledge, or resolve."
     )
     protected Property<String> eventAction;
 
     @Schema(
-        title = "Brief text summary of the event, used to generate the summaries/titles of any associated alerts."
+        title = "Summary used in alert title",
+        description = "Brief text summary (max 1024 chars) rendered into the payload."
     )
     @Size(max = 1024)
     @PluginProperty(dynamic = true)

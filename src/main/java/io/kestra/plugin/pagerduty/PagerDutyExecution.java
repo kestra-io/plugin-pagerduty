@@ -19,9 +19,8 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Send a PagerDuty message with the execution information.",
-    description = "The message will include a link to the execution page in the UI along with the execution ID, namespace, flow name, the start date, duration, and the final status of the execution. If failed, then the task that led to the failure is specified.\n\n" +
-        "Use this notification task only in a flow that has a [Flow trigger](https://kestra.io/docs/administrator-guide/monitoring#alerting). Don't use this notification task in `errors` tasks. Instead, for `errors` tasks, use the [PagerDutyAlert](https://kestra.io/plugins/plugin-pagerduty/io.kestra.plugin.pagerduty.pagerdutyalert) task."
+    title = "Send PagerDuty alert for a flow run",
+    description = "Posts execution details (UI link, IDs, namespace, flow name, start time, duration, and final status with failing task when present) to PagerDuty via the Events API v2. Use only in flows triggered by a [Flow trigger](https://kestra.io/docs/administrator-guide/monitoring#alerting); for `errors` handlers use [PagerDutyAlert](https://kestra.io/plugins/plugin-pagerduty/io.kestra.plugin.pagerduty.pagerdutyalert) instead. Defaults `executionId` to the current run."
 )
 @Plugin(
     examples = {
@@ -37,9 +36,8 @@ import java.util.Map;
                     type: io.kestra.plugin.pagerduty.PagerDutyExecution
                     url: "{{ secret('PAGERDUTY_EVENT') }}" # format: https://events.pagerduty.com/v2/enqueue
                     payloadSummary: "PagerDuty Alert"
-                    deduplicationKey: "dedupkey"
                     routingKey: "routingkey"
-                    eventAction: "acknowledge"
+                    eventAction: "trigger"
                     executionId: "{{trigger.executionId}}"
 
                 triggers:
