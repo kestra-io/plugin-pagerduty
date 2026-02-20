@@ -25,8 +25,8 @@ import java.net.URI;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Send a PagerDuty alert.",
-    description = "Add this task to a list of `errors` tasks to implement custom flow-level failure notifications. Check the <a href=\"https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgx-send-an-alert-event\">PagerDuty documentation</a> for more details.."
+    title = "Send PagerDuty alert from errors task",
+    description = "Posts a raw Events API v2 payload from an `errors` handler to PagerDuty. Provide the Events endpoint URL and JSON payload (including `routing_key` and `event_action`). Keep credentials in secrets; see [PagerDuty documentation](https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgx-send-an-alert-event)."
 )
 @Plugin(
     examples = {
@@ -55,26 +55,39 @@ import java.net.URI;
                         "event_action": "trigger",
                         "payload" : {
                             "summary": "PagerDuty alert",
+                            "source": "kestra",
+                            "severity": "error"
                         }
                       }
                 """
         ),
         @Example(
-            title = "Send a Discord message via incoming webhook.",
+            title = "Send a PagerDuty acknowledge from an errors handler.",
             full = true,
             code = """
-                id: discord_incoming_webhook
+                id: pagerduty_acknowledge
                 namespace: company.team
 
                 tasks:
-                  - id: send_pagerduty_alert
+                  - id: do_work
+                    type: io.kestra.plugin.scripts.shell.Commands
+                    commands:
+                      - exit 1
+
+                errors:
+                  - id: acknowledge_existing_incident
                     type: io.kestra.plugin.pagerduty.PagerDutyAlert
                     url: "{{ secret('PAGERDUTY_EVENT') }}"
                     payload: |
                       {
-                        "dedup_key": "samplekey",
+                        "dedup_key": "existing-incident-key",
                         "routing_key": "samplekey",
-                        "event_action": "acknowledge"
+                        "event_action": "acknowledge",
+                        "payload": {
+                          "summary": "Acknowledge incident from Kestra",
+                          "source": "kestra",
+                          "severity": "error"
+                        }
                       }
                 """
         ),
@@ -84,14 +97,16 @@ import java.net.URI;
 public class PagerDutyAlert extends AbstractPagerDutyConnection {
 
     @Schema(
-        title = "PagerDuty event URL"
+        title = "PagerDuty Events API URL",
+        description = "Endpoint such as `https://events.pagerduty.com/v2/enqueue`; store secrets with `secret()`."
     )
     @PluginProperty(dynamic = true)
     @NotBlank
     protected String url;
 
     @Schema(
-        title = "PagerDuty message payload"
+        title = "PagerDuty message payload",
+        description = "Raw JSON string sent to PagerDuty; must include `routing_key` and `event_action`. Supports templating."
     )
     protected Property<String> payload;
 

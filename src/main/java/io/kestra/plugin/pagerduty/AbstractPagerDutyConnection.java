@@ -27,8 +27,8 @@ import java.util.Map;
 @NoArgsConstructor
 public abstract class AbstractPagerDutyConnection extends Task implements RunnableTask<VoidOutput> {
     @Schema(
-        title = "Options",
-        description = "The options to set to customize the HTTP client"
+        title = "HTTP client options",
+        description = "Optional overrides for timeouts, charset, and headers when calling PagerDuty. Defaults: read timeout 10s, read idle 5m, pool idle 0s, max content 10MB, charset UTF-8."
     )
     @PluginProperty(dynamic = true)
     protected RequestOptions options;
@@ -68,26 +68,26 @@ public abstract class AbstractPagerDutyConnection extends Task implements Runnab
     @Getter
     @Builder
     public static class RequestOptions {
-        @Schema(title = "The time allowed to establish a connection to the server before failing.")
+        @Schema(title = "Connect timeout before fail")
         private final Property<Duration> connectTimeout;
 
-        @Schema(title = "The maximum time allowed for reading data from the server before failing.")
+        @Schema(title = "Read timeout before fail")
         @Builder.Default
         private final Property<Duration> readTimeout = Property.ofValue(Duration.ofSeconds(10));
 
-        @Schema(title = "The time allowed for a read connection to remain idle before closing it.")
+        @Schema(title = "Idle read timeout before close")
         @Builder.Default
         private final Property<Duration> readIdleTimeout = Property.ofValue(Duration.of(5, ChronoUnit.MINUTES));
 
-        @Schema(title = "The time an idle connection can remain in the client's connection pool before being closed.")
+        @Schema(title = "Idle connection pool timeout")
         @Builder.Default
         private final Property<Duration> connectionPoolIdleTimeout = Property.ofValue(Duration.ofSeconds(0));
 
-        @Schema(title = "The maximum content length of the response.")
+        @Schema(title = "Maximum response size in bytes")
         @Builder.Default
         private final Property<Integer> maxContentLength = Property.ofValue(1024 * 1024 * 10);
 
-        @Schema(title = "The default charset for the request.")
+        @Schema(title = "Default request charset")
         @Builder.Default
         private final Property<Charset> defaultCharset = Property.ofValue(StandardCharsets.UTF_8);
 
