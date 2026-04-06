@@ -31,7 +31,7 @@ public abstract class AbstractPagerDutyConnection extends Task implements Runnab
         title = "HTTP client options",
         description = "Optional overrides for timeouts, charset, and headers when calling PagerDuty. Defaults: read timeout 10s, read idle 5m, pool idle 0s, max content 10MB, charset UTF-8."
     )
-    @PluginProperty(dynamic = true)
+    @PluginProperty(dynamic = true, group = "advanced")
     protected RequestOptions options;
 
     protected HttpConfiguration httpClientConfigurationWithOptions() throws IllegalVariableEvaluationException {
@@ -72,32 +72,39 @@ public abstract class AbstractPagerDutyConnection extends Task implements Runnab
     @Builder
     public static class RequestOptions {
         @Schema(title = "Connect timeout before fail")
+        @PluginProperty(group = "execution")
         private final Property<Duration> connectTimeout;
 
         @Schema(title = "Read timeout before fail")
         @Builder.Default
+        @PluginProperty(group = "execution")
         private final Property<Duration> readTimeout = Property.ofValue(Duration.ofSeconds(10));
 
         @Schema(title = "Idle read timeout before close")
         @Builder.Default
+        @PluginProperty(group = "execution")
         private final Property<Duration> readIdleTimeout = Property.ofValue(Duration.of(5, ChronoUnit.MINUTES));
 
         @Schema(title = "Idle connection pool timeout")
         @Builder.Default
+        @PluginProperty(group = "execution")
         private final Property<Duration> connectionPoolIdleTimeout = Property.ofValue(Duration.ofSeconds(0));
 
         @Schema(title = "Maximum response size in bytes")
         @Builder.Default
+        @PluginProperty(group = "execution")
         private final Property<Integer> maxContentLength = Property.ofValue(1024 * 1024 * 10);
 
         @Schema(title = "Default request charset")
         @Builder.Default
+        @PluginProperty(group = "advanced")
         private final Property<Charset> defaultCharset = Property.ofValue(StandardCharsets.UTF_8);
 
         @Schema(
             title = "HTTP headers",
             description = "HTTP headers to include in the request"
         )
+        @PluginProperty(group = "advanced")
         public Property<Map<String, String>> headers;
     }
 }

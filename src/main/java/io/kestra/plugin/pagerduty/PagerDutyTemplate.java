@@ -33,31 +33,35 @@ public abstract class PagerDutyTemplate extends PagerDutyAlert {
         title = "Template resource path",
         hidden = true
     )
+    @PluginProperty(group = "advanced")
     protected Property<String> templateUri;
 
     @Schema(
         title = "Template render variables",
         description = "Key/value map rendered into the template before sending. Uses the current run scope."
     )
+    @PluginProperty(group = "advanced")
     protected Property<Map<String, Object>> templateRenderMap;
 
     @Schema(
         title = "PagerDuty routing key",
         description = "Integration key for the target PagerDuty service."
     )
+    @PluginProperty(group = "connection")
     protected Property<String> routingKey;
 
     @Schema(
         title = "Deduplication key for correlating events",
         description = "Allows PagerDuty to correlate trigger and resolve/acknowledge events."
     )
-    @PluginProperty(dynamic = true)
+    @PluginProperty(dynamic = true, group = "connection")
     protected Property<String> deduplicationKey;
 
     @Schema(
         title = "PagerDuty event action",
         description = "One of trigger, acknowledge, or resolve."
     )
+    @PluginProperty(group = "advanced")
     protected Property<String> eventAction;
 
     @Schema(
@@ -65,7 +69,7 @@ public abstract class PagerDutyTemplate extends PagerDutyAlert {
         description = "Brief text summary (max 1024 chars) rendered into the payload."
     )
     @Size(max = 1024)
-    @PluginProperty(dynamic = true)
+    @PluginProperty(dynamic = true, group = "advanced")
     protected String payloadSummary;
 
     @SuppressWarnings("unchecked")
