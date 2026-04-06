@@ -101,7 +101,7 @@ public class PagerDutyAlert extends AbstractPagerDutyConnection {
         title = "PagerDuty Events API URL",
         description = "Endpoint such as `https://events.pagerduty.com/v2/enqueue`; store secrets with `secret()`."
     )
-    @PluginProperty(dynamic = true)
+    @PluginProperty(dynamic = true, group = "main")
     @NotBlank
     protected String url;
 
@@ -109,6 +109,7 @@ public class PagerDutyAlert extends AbstractPagerDutyConnection {
         title = "PagerDuty message payload",
         description = "Raw JSON string sent to PagerDuty; must include `routing_key` and `event_action`. Supports templating."
     )
+    @PluginProperty(group = "main")
     protected Property<String> payload;
 
     @Override
