@@ -15,15 +15,15 @@
             "custom_details" : [
               {
                   "title": "Flow ID",
-                  "value": {{execution.flowId | json}}
+                  "value": {{execution.flowId | toJson}}
               },
               {
                   "title": "Execution Status",
-                  "value": {{execution.state.current | json }}
+                  "value": {{execution.state.current | toJson }}
               },
               {
                   "title": "Final task ID",
-                  "value": {{lastTask.taskId | json }}
+                  "value": {{lastTask.taskId | toJson }}
               }]
         }
         ,
