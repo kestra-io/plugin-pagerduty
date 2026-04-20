@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.repositories.LocalFlowRepositoryLoader;
@@ -16,6 +17,7 @@ import jakarta.inject.Inject;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @KestraTest
 public class PagerDutyExecutionTest extends AbstractPagerDutyTest {
 
@@ -25,7 +27,7 @@ public class PagerDutyExecutionTest extends AbstractPagerDutyTest {
     @Inject
     protected LocalFlowRepositoryLoader repositoryLoader;
 
-    @BeforeEach
+    @BeforeAll
     protected void init() throws IOException, URISyntaxException {
         repositoryLoader.load(Objects.requireNonNull(PagerDutyExecutionTest.class.getClassLoader().getResource("flows")));
         this.runner.run();
@@ -38,7 +40,10 @@ public class PagerDutyExecutionTest extends AbstractPagerDutyTest {
             "pagerduty"
         );
 
-        String receivedData = waitForWebhookData(() -> FakeWebhookController.data, 5000);
+        String receivedData = waitForWebhookData(
+            () -> FakeWebhookController.data != null && FakeWebhookController.data.contains(failedExecution.getId()) ? FakeWebhookController.data : null,
+            5000
+        );
 
         assertThat(receivedData, containsString(failedExecution.getId()));
         assertThat(receivedData, containsString("https://mysuperhost.com/kestra/ui"));
