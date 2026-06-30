@@ -48,6 +48,7 @@ public abstract class PagerDutyTemplate extends PagerDutyAlert {
         description = "Integration key for the target PagerDuty service."
     )
     @PluginProperty(secret = true, group = "connection")
+    @ToString.Exclude
     protected Property<String> routingKey;
 
     @Schema(
