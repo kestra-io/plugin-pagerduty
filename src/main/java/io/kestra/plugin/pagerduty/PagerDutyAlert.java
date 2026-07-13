@@ -119,7 +119,7 @@ public class PagerDutyAlert extends AbstractPagerDutyConnection {
         try (HttpClient client = new HttpClient(runContext, super.httpClientConfigurationWithOptions())) {
             String payload = runContext.render(this.payload).as(String.class).orElse(null);
 
-            runContext.logger().debug("Send Discord webhook: {}", payload);
+            runContext.logger().debug("Sending PagerDuty event to {}", url);
             HttpRequest.HttpRequestBuilder requestBuilder = createRequestBuilder(runContext)
                 .addHeader("Content-Type", "application/json")
                 .uri(URI.create(url))
