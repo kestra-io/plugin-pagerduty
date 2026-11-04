@@ -10,11 +10,17 @@ import org.junit.jupiter.api.Test;
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.repositories.LocalFlowRepositoryLoader;
 import io.kestra.core.runners.TestRunner;
+import io.kestra.core.serializers.JacksonMapper;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.Matchers.not;
 
 @KestraTest
@@ -46,6 +52,15 @@ public class PagerDutyExecutionTest extends AbstractPagerDutyTest {
         assertThat(receivedData, containsString("Failed on task `failed`"));
         assertThat(receivedData, containsString("{\"title\":\"Final task ID\",\"value\":\"failed\"}"));
         assertThat(receivedData, containsString("Kestra PagerDuty alert"));
+
+        // The link PagerDuty shows on the alert must be the execution URL itself, not Slack markup.
+        JsonNode link = JacksonMapper.ofJson().readTree(receivedData).get("links").get(0);
+        assertThat(link.get("href").asText(), startsWith("https://mysuperhost.com/kestra/ui"));
+        assertThat(link.get("href").asText(), endsWith(failedExecution.getId()));
+        assertThat(link.get("href").asText(), not(containsString("|")));
+        assertThat(link.get("href").asText(), not(containsString("*<")));
+        assertThat(link.get("text").asText(), containsString("main-flow-that-fails"));
+        assertThat(link.get("text").asText(), containsString("Failed on task `failed`"));
         assertThat(receivedData, not(containsString("\"title\":\"Message\",\"value\":\"this is my custom message\"")));
         assertThat(receivedData, not(containsString("\"title\":\"environment\",\"value\":\"test\"")));
         assertThat(receivedData, not(containsString("\"title\":\"team\",\"value\":\"platform\"")));
