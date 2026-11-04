@@ -12,8 +12,6 @@ import io.kestra.core.repositories.LocalFlowRepositoryLoader;
 import io.kestra.core.runners.TestRunner;
 import io.kestra.core.serializers.JacksonMapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,7 +52,7 @@ public class PagerDutyExecutionTest extends AbstractPagerDutyTest {
         assertThat(receivedData, containsString("Kestra PagerDuty alert"));
 
         // The link PagerDuty shows on the alert must be the execution URL itself, not Slack markup.
-        JsonNode link = JacksonMapper.ofJson().readTree(receivedData).get("links").get(0);
+        var link = JacksonMapper.ofJson().readTree(receivedData).get("links").get(0);
         assertThat(link.get("href").asText(), startsWith("https://mysuperhost.com/kestra/ui"));
         assertThat(link.get("href").asText(), endsWith(failedExecution.getId()));
         assertThat(link.get("href").asText(), not(containsString("|")));
