@@ -10,11 +10,13 @@ import org.junit.jupiter.api.Test;
 import io.kestra.core.junit.annotations.KestraTest;
 import io.kestra.core.repositories.LocalFlowRepositoryLoader;
 import io.kestra.core.runners.TestRunner;
+import io.kestra.core.serializers.JacksonMapper;
 
 import jakarta.inject.Inject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 @KestraTest
@@ -46,6 +48,11 @@ public class PagerDutyExecutionTest extends AbstractPagerDutyTest {
         assertThat(receivedData, containsString("Failed on task `failed`"));
         assertThat(receivedData, containsString("{\"title\":\"Final task ID\",\"value\":\"failed\"}"));
         assertThat(receivedData, containsString("Kestra PagerDuty alert"));
+
+        var link = JacksonMapper.ofJson().readTree(receivedData).get("links").get(0);
+        assertThat(link.get("href").asText(), is("https://mysuperhost.com/kestra/ui/ui/main/executions/io.kestra.tests/main-flow-that-fails/" + failedExecution.getId()));
+        assertThat(link.get("text").asText(), containsString("main-flow-that-fails"));
+        assertThat(link.get("text").asText(), containsString("Failed on task `failed`"));
         assertThat(receivedData, not(containsString("\"title\":\"Message\",\"value\":\"this is my custom message\"")));
         assertThat(receivedData, not(containsString("\"title\":\"environment\",\"value\":\"test\"")));
         assertThat(receivedData, not(containsString("\"title\":\"team\",\"value\":\"platform\"")));
